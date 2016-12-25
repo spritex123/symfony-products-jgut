@@ -4,25 +4,26 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-
-use AppBundle\Entity\User;
 use AppBundle\Form\ChangeEmailType;
 use AppBundle\Form\ChangePasswordType;
 use AppBundle\Form\ChangeNameType;
+use Symfony\Component\HttpFoundation\Response;
 
 class ChangeController extends Controller
 {
     /**
      * @Route("/change/email", name="change_email")
+     *
+     * @param Request $request
+     * @return RedirectResponse|Response
      */
     public function changeEmailAction(Request $request)
     {
         $user = $this->getUser();
 
         $form = $this->createForm(ChangeEmailType::class, $user);
-
-        $userEmail = $user->getEmail();
 
         $repository = $this->getDoctrine()->getRepository('AppBundle:User');
         $users = $repository->findAll();
@@ -57,7 +58,7 @@ class ChangeController extends Controller
                 ->setSubject('Hello Email')
                 ->setFrom($this->getParameter('email_parameter'))
                 ->setTo($user->getEmail())
-                ->setBody($this->renderView('AppBundle:Default:mail.html.twig', array('enabled' => $enabled)), 'text/html');
+                ->setBody($this->renderView('AppBundle:Default:mail.html.twig', ['enabled' => $enabled]), 'text/html');
 
             $this->get('mailer')->send($message);
 
@@ -69,6 +70,9 @@ class ChangeController extends Controller
 
     /**
      * @Route("/change/password", name="change_password")
+     *
+     * @param Request $request
+     * @return RedirectResponse|Response
      */
     public function changePasswordAction(Request $request)
     {
@@ -92,6 +96,9 @@ class ChangeController extends Controller
 
     /**
      * @Route("/change/name", name="change_name")
+     *
+     * @param Request $request
+     * @return RedirectResponse|Response
      */
     public function changeNameAction(Request $request)
     {

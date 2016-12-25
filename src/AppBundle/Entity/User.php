@@ -2,12 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\UserRepository")
  * @ORM\Table(name = "user")
  * @ORM\HasLifecycleCallbacks
  */
@@ -81,22 +83,19 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity = "Product", mappedBy = "user")
-     **/
-
+     *
+     */
     protected $products;
-
-    protected $username;
-    protected $salt;
 
     /**
      * Set username
      *
-     * @param string $username
+     * @param $email
      * @return User
      */
     public function setUsername($email)
     {
-        $this->username = $email;
+        $this->email = $email;
 
         return $this;
     }
@@ -118,8 +117,6 @@ class User implements UserInterface
      */
     public function getSalt()
     {
-        // you *may* need a real salt depending on your encoder
-        // see section on salt below
         return null;
     }
 
@@ -203,8 +200,7 @@ class User implements UserInterface
      */
     public function getRoles()
     {
-        //return $this->roles;
-        return array('ROLE_USER');
+        return ['ROLE_USER'];
     }
 
     /**
@@ -329,16 +325,16 @@ class User implements UserInterface
      */
     public function __construct()
     {
-        $this->products = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->products = new ArrayCollection();
     }
 
     /**
      * Add products
      *
-     * @param \AppBundle\Entity\Product $products
+     * @param Product $products
      * @return User
      */
-    public function addProduct(\AppBundle\Entity\Product $products)
+    public function addProduct(Product $products)
     {
         $this->products[] = $products;
 
@@ -348,9 +344,9 @@ class User implements UserInterface
     /**
      * Remove products
      *
-     * @param \AppBundle\Entity\Product $products
+     * @param Product $products
      */
-    public function removeProduct(\AppBundle\Entity\Product $products)
+    public function removeProduct(Product $products)
     {
         $this->products->removeElement($products);
     }
@@ -358,7 +354,7 @@ class User implements UserInterface
     /**
      * Get products
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getProducts()
     {

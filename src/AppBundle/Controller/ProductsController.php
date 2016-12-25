@@ -4,18 +4,21 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-
-use AppBundle\Entity\User;
 use AppBundle\Entity\Product;
 use AppBundle\Form\ProductType;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductsController extends Controller
 {
     /**
      * @Route("/products", name="products")
+     *
+     * @return Response
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
         $repository = $this->getDoctrine()->getRepository('AppBundle:Product');
 
@@ -27,11 +30,14 @@ class ProductsController extends Controller
             $products = $repository->findByUser($user->getId());
         }
 
-        return $this->render('AppBundle:Products:index.html.twig', array('products' => $products));
+        return $this->render('AppBundle:Products:index.html.twig', ['products' => $products]);
     }
 
     /**
      * @Route("/product/add", name="product_add")
+     *
+     * @param Request $request
+     * @return RedirectResponse|Response
      */
     public function addAction(Request $request)
     {
@@ -44,31 +50,17 @@ class ProductsController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            ////////////////////////////////////////////////////////////////////
-            // Upload file
-            ////////////////////////////////////////////////////////////////////
-            // $file stores the uploaded PDF file
-            /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+            /** @var UploadedFile $file */
             if ($product->getThumbnail()) {
                 $file = $product->getThumbnail();
-
-                // Generate a unique name for the file before saving it
                 $fileName = md5(uniqid()) . '.' . $file->guessExtension();
-
-                // Move the file to the directory where brochures are stored
                 $file->move(
                     $this->getParameter('thumbnail_directory'),
                     $fileName
                 );
 
-                // Update the 'brochure' property to store the PDF file name
-                // instead of its contents
                 $product->setThumbnail($fileName);
             }
-            ////////////////////////////////////////////////////////////////////
-            // End upload file
-            ////////////////////////////////////////////////////////////////////
 
             $product->setUser($user);
 
@@ -84,6 +76,10 @@ class ProductsController extends Controller
 
     /**
      * @Route("/product/edit/{id}", name = "product_edit", requirements = {"id" = "\d+"}, defaults = {"id" = null})
+     *
+     * @param $id
+     * @param Request $request
+     * @return RedirectResponse|Response
      */
     public function editAction($id, Request $request)
     {
@@ -91,8 +87,10 @@ class ProductsController extends Controller
             throw $this->createNotFoundException('No id ' . $id);
         }
 
-        $repository = $this->getDoctrine()->getRepository('AppBundle:Product');
-        $product = $repository->find($id);
+        $product = $this->getDoctrine()->getRepository('AppBundle:Product')->find($id);
+        if (!$product) {
+            throw $this->createNotFoundException('No product found for ' . $id);
+        }
 
         $user = $this->getUser();
 
@@ -109,25 +107,19 @@ class ProductsController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $product->setUser($user);
 
+            /** @var UploadedFile $file */
             if ($product->getThumbnail()) {
                 $file = $product->getThumbnail();
-
-                // Generate a unique name for the file before saving it
                 $fileName = md5(uniqid()) . '.' . $file->guessExtension();
-
-                // Move the file to the directory where brochures are stored
                 $file->move(
                     $this->getParameter('thumbnail_directory'),
                     $fileName
                 );
-
                 $fileUnlink = $this->getParameter('thumbnail_directory') . $thumbnail;
                 if (file_exists($fileUnlink)) {
                     unlink($this->getParameter('thumbnail_directory') . $thumbnail);
                 }
 
-                // Update the 'brochure' property to store the PDF file name
-                // instead of its contents
                 $product->setThumbnail($fileName);
             } else {
                 $product->setThumbnail($thumbnail);
@@ -135,7 +127,6 @@ class ProductsController extends Controller
 
             $em = $this->getDoctrine()->getManager();
             $em->flush();
-
 
             return $this->redirect($this->generateUrl('products'));
         }
@@ -145,7 +136,9 @@ class ProductsController extends Controller
 
     /**
      * @Route("/product/delete/{id}", name = "product_delete", requirements = {"id" = "\d+"}, defaults = {"id" = null})
-
+     *
+     * @param $id
+     * @return RedirectResponse
      */
     public function deleteAction($id)
     {
@@ -153,9 +146,7 @@ class ProductsController extends Controller
             throw $this->createNotFoundException('No id ' . $id);
         }
 
-        $repository = $this->getDoctrine()->getRepository('AppBundle:Product');
-        $product = $repository->find($id);
-
+        $product = $this->getDoctrine()->getRepository('AppBundle:Product')->find($id);
         if (!$product) {
             throw $this->createNotFoundException('No product found for id ' . $id);
         }

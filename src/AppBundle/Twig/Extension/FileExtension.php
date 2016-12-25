@@ -11,16 +11,23 @@ class FileExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
-            //new \Twig_Function('checkUrl', array($this, 'checkUrl')),
+        return [
             new \Twig_SimpleFunction('file_exists', 'file_exists'),
-        );
+        ];
     }
 
-    public function file_exists($file) {
+    /**
+     * @param $file
+     * @return bool
+     */
+    public function file_exists($file)
+    {
         return file_exists($file);
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return 'app_file';

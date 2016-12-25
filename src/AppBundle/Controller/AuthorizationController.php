@@ -4,25 +4,21 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-
-
-// delete
-use Symfony\Component\HttpFoundation\Response;
-
-
-
-
 use AppBundle\Entity\User;
 use AppBundle\Form\ForgotPasswordType;
 use AppBundle\Form\ForgotSetPasswordType;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizationController extends Controller
 {
     /**
      * @Route("/authorization", name="authorization")
+     *
+     * @return Response
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
         $authenticationUtils = $this->get('security.authentication_utils');
 
@@ -32,10 +28,10 @@ class AuthorizationController extends Controller
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('AppBundle:Authorization:index.html.twig', array(
+        return $this->render('AppBundle:Authorization:index.html.twig', [
             'last_username' => $lastUsername,
             'error'         => $error,
-        ));
+        ]);
     }
 
     /**
@@ -48,6 +44,9 @@ class AuthorizationController extends Controller
 
     /**
      * @Route("/forgotpassword", name="forgot_password")
+     *
+     * @param Request $request
+     * @return RedirectResponse|Response
      */
     public function forgotPasswordAction(Request $request)
     {
@@ -61,23 +60,24 @@ class AuthorizationController extends Controller
             $repository = $this->getDoctrine()->getRepository('AppBundle:User');
             $users = $repository->findAll();
 
-            $count = count($users);
-
-            for ($i = 0; $i < $count; $i++) {
-                if ($users[$i]->getEmail() == $form->getData()->getEmail()) {
-
-                    $users[$i]->setForgotPassword(true);
+            /** @var User $user */
+            foreach ($users as $user) {
+                if ($user->getEmail() == $form->getData()->getEmail()) {
+                    $user->setForgotPassword(true);
 
                     $em = $this->getDoctrine()->getManager();
                     $em->flush();
 
-                    $forgotPassword = $this->getParameter('new_password_parameter') . $users[$i]->getToken();
+                    $forgotPassword = $this->getParameter('new_password_parameter') . $user->getToken();
 
                     $message = \Swift_Message::newInstance()
                         ->setSubject('Hello Email')
                         ->setFrom($this->getParameter('email_parameter'))
                         ->setTo($form->getData()->getEmail())
-                        ->setBody($this->renderView('AppBundle:Authorization:mail.html.twig', array('forgotPassword' => $forgotPassword)), 'text/html');
+                        ->setBody($this->renderView(
+                            'AppBundle:Authorization:mail.html.twig',
+                            ['forgotPassword' => $forgotPassword]
+                        ), 'text/html');
 
                     $this->get('mailer')->send($message);
 
@@ -91,6 +91,10 @@ class AuthorizationController extends Controller
 
     /**
      * @Route("/newpassword/{token}", name="new_password", defaults={"token" = null})
+     *
+     * @param $token
+     * @param Request $request
+     * @return RedirectResponse|Response
      */
     public function newPasswordAction($token, Request $request)
     {
@@ -108,22 +112,20 @@ class AuthorizationController extends Controller
             $repository = $this->getDoctrine()->getRepository('AppBundle:User');
             $users = $repository->findAll();
 
-            $count = count($users);
+            /** @var User $user */
+            foreach ($users as $user) {
+                if ($user->getForgotPassword() && $user->getToken() == $token) {
+                    $user->setForgotPassword(false);
+                    $user->setPassword(md5($form->getData()->getPassword()));
 
-            for ($i = 0; $i < $count; $i++) {
-                if ($users[$i]->getForgotPassword() && $users[$i]->getToken() == $token) {
+                    $em = $this->getDoctrine()->getManager();
+                    $em->flush();
 
-                        $users[$i]->setForgotPassword(false);
-                        $users[$i]->setPassword(md5($form->getData()->getPassword()));
-
-                        $em = $this->getDoctrine()->getManager();
-                        $em->flush();
-
-                        return $this->redirect($this->generateUrl('logout'));
-                    }
+                    return $this->redirect($this->generateUrl('logout'));
+                }
             }
 
-            return $this->redirect($this->generateUrl('new_password', array('token' => $token)));
+            return $this->redirect($this->generateUrl('new_password', ['token' => $token]));
         }
 
         return $this->render('AppBundle:Authorization:forgotsetpassword.html.twig', ['form' => $form->createView()]);

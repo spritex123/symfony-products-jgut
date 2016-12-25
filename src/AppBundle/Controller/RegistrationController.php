@@ -4,8 +4,8 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-
 use AppBundle\Entity\User;
 use AppBundle\Form\RegistrationType;
 
@@ -13,6 +13,9 @@ class RegistrationController extends Controller
 {
     /**
      * @Route("/registration", name="registration")
+     *
+     * @param Request $request
+     * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function indexAction(Request $request)
     {
@@ -48,7 +51,7 @@ class RegistrationController extends Controller
                 ->setSubject('Hello Email')
                 ->setFrom($this->getParameter('email_parameter'))
                 ->setTo($user->getEmail())
-                ->setBody($this->renderView('AppBundle:Default:mail.html.twig', array('enabled' => $enabled)), 'text/html');
+                ->setBody($this->renderView('AppBundle:Default:mail.html.twig', ['enabled' => $enabled]), 'text/html');
 
             $this->get('mailer')->send($message);
 
@@ -60,29 +63,26 @@ class RegistrationController extends Controller
 
     /**
      * @Route("/enabled/{token}", name="enabled", defaults={"token" = null})
+     *
+     * @param $token
+     * @return RedirectResponse
      */
-    public function enabledAction($token, Request $request)
+    public function enabledAction($token)
     {
         if (!$token) {
-            throw $this->createNotFoundException('No token' . $token);
+            throw $this->createNotFoundException('No token ' . $token);
         }
 
-        $repository = $this->getDoctrine()->getRepository('AppBundle:User');
-        $users = $repository->findAll();
-
-        $count = count($users);
-
-        for ($i = 0; $i < $count; $i++) {
-            if ($users[$i]->getToken() == $token) {
-                $users[$i]->setEnabled(true);
-
-                $em = $this->getDoctrine()->getManager();
-                $em->flush();
-
-                return $this->redirect($this->generateUrl('logout'));
-            }
+        /** @var User $user */
+        $user = $this->getDoctrine()->getRepository('AppBundle:User')->getByToken($token);
+        if (!$user) {
+            throw $this->createNotFoundException('No user found ' . $token);
         }
 
+        $user->setEnabled(true);
+        $user->setToken(null);
+        $this->getDoctrine()->getManager()->flush();
+        
         return $this->redirect($this->generateUrl('logout'));
     }
 }
