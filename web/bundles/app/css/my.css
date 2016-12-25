@@ -1,0 +1,41 @@
+body { margin: 1em auto; min-width: 1200px; /*max-width: 1200px;*/ font-family: "Consolas", Sans-Serif; }
+
+div { padding: 1em; }
+div.captchaa { padding: 0; border: 0px solid black; }
+
+h1, h2, h3, h4, h5, h6 { padding: 15px 0px; font-weight: bold; }
+
+h1 { font-size: 2em; }
+h2 { font-size: 1.5em; }
+h3 { font-size: 1.17em; }
+h4 { font-size: 1.12em; }
+h5 { font-size: .83em; }
+h6 { font-size: .75em; }
+
+a { padding: 5px; background: #fff59d; }
+a:hover { background: #ffcc80; }
+
+a.table { padding: 1px; background: none; color: blue; }
+a.table:hover { background: #f48fb1; }
+
+p { margin: 5px 0; }
+
+b { font-weight: bold; }
+i { font-style: oblique; }
+
+table { width: 100%; }
+table, tr, th, td { border: 3px solid black; }
+th, td { padding: 5px; vertical-align: middle; }
+
+
+.red    { background: #ef9a9a; }
+.green  { background: #a5d6a7; }
+.blue   { background: #90caf9; }
+
+.pink   { background: #f48fb1; }
+.purple { background: #ce93d8; }
+.yellow { background: #fff59d; }
+.orange { background: #ffcc80; }
+
+.grey  { background: #eeeeee; }
+.brown { background: #bcaaa4; }

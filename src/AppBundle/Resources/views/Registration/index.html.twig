@@ -1,0 +1,29 @@
+{% extends 'AppBundle:Default:index.html.twig' %}
+
+{% block body %}
+    <div class="brown">
+        <h2>Registration:index.html.twig</h2>
+        {{ form_start(form, {'attr': {novalidate: 'novalidate'}}) }}
+            {{ form_label(form.email) }}
+            {{ form_widget(form.email) }}
+            {{ form_errors(form.email) }}
+
+            {{ form_label(form.password) }}
+            {{ form_widget(form.password) }}
+            {{ form_errors(form.password) }}
+
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name) }}
+            {{ form_errors(form.name) }}
+
+            <label for="captcha">Validation value:</label>
+            <input type="text" id="captcha" name="captcha" class="validationValue" />
+
+            <div>
+                <div id="PuzzleCaptcha"></div>
+            </div>
+
+            <input type="submit" value="Registration" disabled="true" class="btnSubmit">
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

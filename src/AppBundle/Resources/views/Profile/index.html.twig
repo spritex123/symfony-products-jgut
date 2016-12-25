@@ -1,0 +1,57 @@
+{% extends 'AppBundle:Default:index.html.twig' %}
+
+{% block body %}
+    <div class="blue">
+        <h2>Profile:index.html.twig</h2>
+
+        {% if is_granted('ROLE_USER') %}
+            <p>Id: "{{ app.user.id }}"</p>
+        {% endif %}
+        <p>Email: "{{ app.user.username }}"</p>
+        <p>Password: "{{ app.user.password }}"</p>
+        <p>Roles: {% for role in app.user.roles %}"{{ role }}"{% endfor %}</p>
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <h3>Users:</h3>
+            {% if users %}
+                <table id="example" class="purple">
+                    <thead>
+                        <tr>
+                            <th><b>Id</b></th>
+                            <th><b>Email</b></th>
+                            <th><b>Roles</b></th>
+                            <th><b>Name</b></th>
+                            <th><b>Created</b></th>
+                            <th><b>Updated</b></th>
+                            <th><b>Enabled</b></th>
+                        </tr>
+                    </thead>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{% for role in user.roles %}{{ role }}{% endfor %}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.created | date("y-m-d H:i:s") }}</td>
+                            <td>{{ user.updated | date("y-m-d H:i:s") }}</td>
+                            <td>{{ user.enabled ? 'Yes' : 'No' }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p>No users!</p>
+            {% endif %}
+        {% elseif is_granted('ROLE_USER') %}
+            <p>Name: "{{ app.user.name }}"</p>
+            <p>Created: {{ app.user.created | date("y-m-d H:i:s") }}</p>
+            <p>Updated: {{ app.user.updated | date("y-m-d H:i:s") }}</p>
+            <p>Enabled: {{ app.user.enabled ? 'Yes' : 'No' }}</p>
+            <div>
+                Change:
+                <a href="{{ path('change_email') }}">email</a>
+                <a href="{{ path('change_password') }}">password</a>
+                <a href="{{ path('change_name') }}">name</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

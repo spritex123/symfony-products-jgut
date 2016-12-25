@@ -1,0 +1,34 @@
+{% extends 'AppBundle:Default:index.html.twig' %}
+
+{% block body %}
+    <div class="blue">
+        <h2>Products:edit.html.twig</h2>
+        {{ form_start(form, {'attr': {novalidate: 'novalidate'}}) }}
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name) }}
+            {{ form_errors(form.name) }}
+
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description) }}
+            {{ form_errors(form.description) }}
+
+            {{ form_label(form.thumbnail) }}
+            {{ form_widget(form.thumbnail) }}
+            {{ form_errors(form.thumbnail) }}
+
+            {% if (thumbnail is empty) %}
+                <h1>null</h1>
+            {% else %}
+                {{ thumbnail }}
+                <img src="{{ asset(thumbnail_directory ~ thumbnail) }}" width="200" alt="Image">
+            {% endif %}
+
+            {{ form_label(form.price) }}
+            {{ form_widget(form.price) }}
+            {{ form_errors(form.price) }}
+
+            <input type="submit" value="Edit">
+        {{ form_end(form) }}
+        <h1>"{{ thumbnail }}"</h1>
+    </div>
+{% endblock %}

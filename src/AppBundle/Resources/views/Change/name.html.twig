@@ -1,0 +1,14 @@
+{% extends 'AppBundle:Default:index.html.twig' %}
+
+{% block body %}
+    <div class="blue">
+        <h2>Change:name.html.twig</h2>
+        {{ form_start(form, {'attr': {novalidate: 'novalidate'}}) }}
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name) }}
+            {{ form_errors(form.name) }}
+
+            <input type="submit" value="Change">
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

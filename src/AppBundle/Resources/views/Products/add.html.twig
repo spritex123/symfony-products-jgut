@@ -1,0 +1,26 @@
+{% extends 'AppBundle:Default:index.html.twig' %}
+
+{% block body %}
+    <div class="blue">
+        <h2>Products:add.html.twig</h2>
+        {{ form_start(form, {'attr': {novalidate: 'novalidate'}}) }}
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name) }}
+            {{ form_errors(form.name) }}
+
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description) }}
+            {{ form_errors(form.description) }}
+
+            {{ form_label(form.thumbnail) }}
+            {{ form_widget(form.thumbnail) }}
+            {{ form_errors(form.thumbnail) }}
+
+            {{ form_label(form.price) }}
+            {{ form_widget(form.price) }}
+            {{ form_errors(form.price) }}
+
+            <input type="submit" value="Add">
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
