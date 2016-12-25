@@ -10,6 +10,7 @@ use AppBundle\Entity\User;
 use AppBundle\Form\ForgotPasswordType;
 use AppBundle\Form\ForgotSetPasswordType;
 use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 class AuthorizationController extends Controller
 {
@@ -65,10 +66,10 @@ class AuthorizationController extends Controller
                 if ($user->getEmail() == $form->getData()->getEmail()) {
                     $user->setForgotPassword(true);
 
+                    $forgotPassword = $this->getParameter('new_password_parameter') . $user->getToken();
+
                     $em = $this->getDoctrine()->getManager();
                     $em->flush();
-
-                    $forgotPassword = $this->getParameter('new_password_parameter') . $user->getToken();
 
                     $message = \Swift_Message::newInstance()
                         ->setSubject('Hello Email')
@@ -80,6 +81,8 @@ class AuthorizationController extends Controller
                         ), 'text/html');
 
                     $this->get('mailer')->send($message);
+
+                    $this->addFlash('notice', 'A letter sent!');
 
                     return $this->redirect($this->generateUrl('homepage'));
                 }
@@ -93,39 +96,43 @@ class AuthorizationController extends Controller
      * @Route("/newpassword/{token}", name="new_password", defaults={"token" = null})
      *
      * @param $token
+     * @param User $user
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function newPasswordAction($token, Request $request)
+    public function newPasswordAction(User $user, Request $request)
     {
-        if (!$token) {
+        /*if (!$token) {
             throw $this->createNotFoundException('No token' . $token);
-        }
+        }*/
 
-        $user = new User();
+        //$user = new User();
 
         $form = $this->createForm(ForgotSetPasswordType::class, $user);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $repository = $this->getDoctrine()->getRepository('AppBundle:User');
-            $users = $repository->findAll();
+            /*$repository = $this->getDoctrine()->getRepository('AppBundle:User');
+            $users = $repository->findAll();*/
 
             /** @var User $user */
-            foreach ($users as $user) {
-                if ($user->getForgotPassword() && $user->getToken() == $token) {
+            /*foreach ($users as $user) {*/
+                if ($user->getForgotPassword()) {
                     $user->setForgotPassword(false);
                     $user->setPassword(md5($form->getData()->getPassword()));
 
-                    $em = $this->getDoctrine()->getManager();
-                    $em->flush();
+                    // $em = $this->getDoctrine()->getManager();
+                    // $em->flush();
+                    $this->getDoctrine()->getManager()->flush();
+
+                    $this->addFlash('notice', 'Password changed!');
 
                     return $this->redirect($this->generateUrl('logout'));
                 }
-            }
+            // }
 
-            return $this->redirect($this->generateUrl('new_password', ['token' => $token]));
+            //return $this->redirect($this->generateUrl('new_password', ['token' => $token]));
         }
 
         return $this->render('AppBundle:Authorization:forgotsetpassword.html.twig', ['form' => $form->createView()]);

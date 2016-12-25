@@ -20,6 +20,16 @@
         <h1>::base.html.twig</h1>
 
         {% block menu %}{% endblock %}
+        <div class="grey">
+
+            {% for flashMessage in app.session.flashbag.get('notice') %}
+                <div class="flash-notice">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            {{dump(app.session.flashbag.get('notice'))}}
+
+        </div>
         {% block body %}{% endblock %}
 
         {% block javascripts %}

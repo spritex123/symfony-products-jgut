@@ -1,4 +1,4 @@
-body { margin: 1em auto; min-width: 1200px; /*max-width: 1200px;*/ font-family: "Consolas", Sans-Serif; }
+body { margin: 1em auto; min-width: 800px; max-width: 1200px; font-family: "Consolas", Sans-Serif; }
 
 div { padding: 1em; }
 div.captchaa { padding: 0; border: 0px solid black; }
@@ -26,7 +26,6 @@ i { font-style: oblique; }
 table { width: 100%; }
 table, tr, th, td { border: 3px solid black; }
 th, td { padding: 5px; vertical-align: middle; }
-
 
 .red    { background: #ef9a9a; }
 .green  { background: #a5d6a7; }

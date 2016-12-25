@@ -25,25 +25,9 @@ class ChangeController extends Controller
 
         $form = $this->createForm(ChangeEmailType::class, $user);
 
-        $repository = $this->getDoctrine()->getRepository('AppBundle:User');
-        $users = $repository->findAll();
-
-        $count = count($users);
-
-        for ($i = 0; $i < $count; $i++) {
-            $users_db[] = $users[$i]->getEmail();
-        }
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            for ($i = 0; $i < $count; $i++) {
-                if ($users_db[$i] == $form->getData()->getEmail()) {
-                    return $this->redirect($this->generateUrl('homepage'));
-                }
-            }
-
             $user->setEmail(mb_strtolower($form->getData()->getEmail()));
             $user->setEnabled(false);
             $user->setToken(md5($user->getEmail() . '1'));
@@ -61,6 +45,8 @@ class ChangeController extends Controller
                 ->setBody($this->renderView('AppBundle:Default:mail.html.twig', ['enabled' => $enabled]), 'text/html');
 
             $this->get('mailer')->send($message);
+
+            $this->addFlash('notice', 'Email changed!');
 
             return $this->redirect($this->generateUrl('logout'));
         }
@@ -83,10 +69,12 @@ class ChangeController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setPassword($user->getPassword());
+            $user->setPassword(md5($user->getPassword()));
 
             $em = $this->getDoctrine()->getManager();
             $em->flush();
+
+            $this->addFlash('notice', 'Password changed!');
 
             return $this->redirect($this->generateUrl('profile'));
         }
@@ -113,6 +101,8 @@ class ChangeController extends Controller
 
             $em = $this->getDoctrine()->getManager();
             $em->flush();
+
+            $this->addFlash('notice', 'Name changed!');
 
             return $this->redirect($this->generateUrl('profile'));
         }

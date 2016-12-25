@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\User;
 use AppBundle\Form\RegistrationType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 class RegistrationController extends Controller
 {
@@ -26,7 +27,7 @@ class RegistrationController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $repository = $this->getDoctrine()->getRepository('AppBundle:User');
+            /*$repository = $this->getDoctrine()->getRepository('AppBundle:User');
             $users = $repository->findAll();
 
             $count = count($users);
@@ -35,7 +36,7 @@ class RegistrationController extends Controller
                 if ($form->getData()->getEmail() == $users[$i]->getEmail()) {
                     return $this->redirect($this->generateUrl('homepage'));
                 }
-            }
+            }*/
 
             $user->setEmail(mb_strtolower($user->getEmail()));
             $user->setPassword(md5($user->getPassword()));
@@ -55,6 +56,8 @@ class RegistrationController extends Controller
 
             $this->get('mailer')->send($message);
 
+            $this->addFlash('notice', 'User added!');
+
             return $this->redirect($this->generateUrl('homepage'));
         }
 
@@ -63,15 +66,16 @@ class RegistrationController extends Controller
 
     /**
      * @Route("/enabled/{token}", name="enabled", defaults={"token" = null})
+     * @ParamConverter("token", options = {"token" = "token"})
      *
      * @param $token
      * @return RedirectResponse
      */
     public function enabledAction($token)
     {
-        if (!$token) {
+        /*if (!$token) {
             throw $this->createNotFoundException('No token ' . $token);
-        }
+        }*/
 
         /** @var User $user */
         $user = $this->getDoctrine()->getRepository('AppBundle:User')->getByToken($token);
@@ -80,9 +84,8 @@ class RegistrationController extends Controller
         }
 
         $user->setEnabled(true);
-        $user->setToken(null);
         $this->getDoctrine()->getManager()->flush();
-        
+
         return $this->redirect($this->generateUrl('logout'));
     }
 }

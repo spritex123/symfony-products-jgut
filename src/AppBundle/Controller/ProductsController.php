@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Product;
 use AppBundle\Form\ProductType;
 use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 class ProductsController extends Controller
 {
@@ -68,30 +69,33 @@ class ProductsController extends Controller
             $em->persist($product);
             $em->flush();
 
+            $this->addFlash('notice', 'Product added!');
+
             return $this->redirect($this->generateUrl('products'));
         }
 
         return $this->render('AppBundle:Products:add.html.twig', ['form' => $form->createView()]);
     }
 
+    /*
+    * @ParamConverter("id", class = "AppBundle:Product", options = {"id" = "id"})
+    *
+    * @param $id
+    *
+    public function editAction(Product $product, Request $request) {
+        $product = $id
+        ...
+    }*/
+
     /**
-     * @Route("/product/edit/{id}", name = "product_edit", requirements = {"id" = "\d+"}, defaults = {"id" = null})
+     * @Route("/product/edit/{id}", name = "product_edit", requirements = {"id" = "\d+"})
      *
-     * @param $id
+     * @param Product $product
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function editAction($id, Request $request)
+    public function editAction(Product $product, Request $request)
     {
-        if (!$id) {
-            throw $this->createNotFoundException('No id ' . $id);
-        }
-
-        $product = $this->getDoctrine()->getRepository('AppBundle:Product')->find($id);
-        if (!$product) {
-            throw $this->createNotFoundException('No product found for ' . $id);
-        }
-
         $user = $this->getUser();
 
         if ($user->getId() != $product->getUser()->getId()) {
@@ -128,6 +132,8 @@ class ProductsController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
+            $this->addFlash('notice', 'Product edited!');
+
             return $this->redirect($this->generateUrl('products'));
         }
 
@@ -155,6 +161,7 @@ class ProductsController extends Controller
 
         if (!in_array('ROLE_ADMIN', $user->getRoles())) {
             if ($user->getId() != $product->getUser()->getId()) {
+                $this->addFlash('notice', 'Not your product!');
                 return $this->redirect($this->generateUrl('products'));
             }
         }
@@ -162,6 +169,8 @@ class ProductsController extends Controller
         $em = $this->getDoctrine()->getManager();
         $em->remove($product);
         $em->flush();
+
+        $this->addFlash('notice', 'Product deleted!');
 
         return $this->redirect($this->generateUrl('products'));
     }

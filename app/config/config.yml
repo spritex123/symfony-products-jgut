@@ -9,8 +9,8 @@ imports:
 parameters:
     locale: en
     thumbnail_directory: '%kernel.root_dir%/../web/uploads/'
-    email_parameter: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX@gmail.com'
-    site: 'http://localhost/0-issart/spritex123-symfony-products-2/web/app_dev.php' #####№№№№№#### для отправки на почту
+    email_parameter: 'xxx@gmail.com'
+    site: 'http://localhost/0-issart/spritex123-symfony-products-jgut/web/app_dev.php' #####№№№№№#### для отправки на почту
     enabled_parameter: '%site%/enabled/'
     forgot_password_parameter: '%site%/forgotpassword'
     new_password_parameter: '%site%/newpassword/'
@@ -77,7 +77,7 @@ swiftmailer:
     transport: smtp
     host: smtp.gmail.com
     username: '%email_parameter%'
-    password: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    password: xxx
     auth_mode: login
     port: 587
     encryption: tls

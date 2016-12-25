@@ -8,10 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\UserRepository")
  * @ORM\Table(name = "user")
  * @ORM\HasLifecycleCallbacks
+ * @UniqueEntity(fields={"email"}, groups={"registration", "change"})
  */
 class User implements UserInterface
 {
@@ -23,10 +26,12 @@ class User implements UserInterface
     protected $id;
 
     /**
+     * @var string $email
+     *
      * @ORM\Column(type = "string", length = 255)
      *
      * @Assert\NotBlank(groups = {"registration", "authorization", "change", "forgotpassword"})
-     * @Assert\Email(groups = {"registration", "authorization", "forgotpassword"})
+     * @Assert\Email(groups = {"registration", "authorization", "change", "forgotpassword"})
      * @Assert\Length(max = 255, groups = {"registration", "authorization", "change", "forgotpassword"})
      */
     protected $email;
