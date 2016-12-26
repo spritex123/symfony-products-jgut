@@ -7,34 +7,31 @@
         {% stylesheets
             'bundles/app/css/reset.css'
             'bundles/app/bootstrap/css/bootstrap.min.css'
-            'bundles/app/css/my.css'
             'bundles/app/css/jquery.dataTables.min.css'
             'bundles/app/css/puzzleCAPTCHA.css'
+            'bundles/app/css/my.css'
             filter='cssrewrite' output='css/compiled/app.css' %}
             <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
 </head>
 <body>
-    <div class="red">
-        <h1>::base.html.twig</h1>
+    <div class="container main red">
+        {# <h1>::base.html.twig</h1> #}
 
         {% block menu %}{% endblock %}
-        <div class="grey">
-
+        <div class="row grey">
             {% for flashMessage in app.session.flashbag.get('notice') %}
-                <div class="flash-notice">
-                    {{ flashMessage }}
+                <div class="col-xs-12 flash-notice">
+                    <h3 class="text-danger">{{ flashMessage }}</h3>
                 </div>
             {% endfor %}
-            {{dump(app.session.flashbag.get('notice'))}}
-
         </div>
         {% block body %}{% endblock %}
 
         {% block javascripts %}
             {% javascripts
-                'bundles/app/js/bootstrap.min.js'
+                'bundles/app/bootstrap/js/bootstrap.min.js'
                 'bundles/app/js/jquery-1.12.4.js'
                 'bundles/app/js/jquery.dataTables.min.js'
                 'bundles/app/js/puzzleCAPTCHA.js'
@@ -56,7 +53,7 @@
                     imageURL:imagePath,
                     rows:1,
                     targetInput:'.validationValue',
-                    targetVal:'Validated!!',
+                    targetVal:'Validated!!!',
                     targetButton:'.btnSubmit'
                 });
             </script>

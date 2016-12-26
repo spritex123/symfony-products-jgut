@@ -17,7 +17,7 @@ security:
         in_memory:
             memory:
                 users:
-                    - { name: 'admin@mail.com', password: 'c4ca4238a0b923820dcc509a6f75849b', roles: 'ROLE_ADMIN' }
+                    - { name: 'admin@mail.com', password: '202cb962ac59075b964b07152d234b70', roles: 'ROLE_ADMIN' }
         user_db:
             entity: { class: AppBundle\Entity\User, property: email }
 
@@ -25,6 +25,9 @@ security:
         #ROLE_ADMIN: ROLE_USER
 
     firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
         main:
             pattern: ^/
             anonymous: ~
@@ -37,9 +40,30 @@ security:
                 invalidate_session: false
             provider: chain_provider
 
+        # secured_area:
+        #     anonymous: ~
+        #     oauth:
+        #         resource_owners:
+        #             facebook:           "/login/check-facebook"
+        #             google:             "/login/check-google"
+        #             my_custom_provider: "/login/check-custom"
+        #             my_github:          "/login/check-github"
+        #         login_path:        /login
+        #         use_forward:       false
+        #         failure_path:      /login
+
+        #         oauth_user_provider:
+        #             service: my.oauth_aware.user_provider.service
+
     access_control:
-        - { path: ^/secret, roles: [ROLE_ADMIN, ROLE_USER] }
-        - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        # - { path: ^/secret, roles: [ROLE_ADMIN, ROLE_USER] }
+
+        - { path: ^/authorization, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/registration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/product/edit/, roles: ROLE_USER }
+        - { path: ^/, roles: [ROLE_ADMIN, ROLE_USER] }
 
     access_denied_url:
         /error403
+

@@ -1,4 +1,4 @@
-body { margin: 1em auto; min-width: 800px; max-width: 1200px; font-family: "Consolas", Sans-Serif; }
+/*body { margin: 1em auto; min-width: 800px; max-width: 1200px; font-family: "Consolas", Sans-Serif; }
 
 div { padding: 1em; }
 div.captchaa { padding: 0; border: 0px solid black; }
@@ -25,9 +25,14 @@ i { font-style: oblique; }
 
 table { width: 100%; }
 table, tr, th, td { border: 3px solid black; }
-th, td { padding: 5px; vertical-align: middle; }
+th, td { padding: 5px; vertical-align: middle; }*/
 
-.red    { background: #ef9a9a; }
+div.main { margin-top: 10px; margin-bottom: 10px; }
+div.add { margin: 10px 0; }
+li.vcenter { padding: 10px 15px; }
+table.break-word>td { word-wrap: break-word; }
+
+/*.red    { background: #ef9a9a; }
 .green  { background: #a5d6a7; }
 .blue   { background: #90caf9; }
 
@@ -37,4 +42,4 @@ th, td { padding: 5px; vertical-align: middle; }
 .orange { background: #ffcc80; }
 
 .grey  { background: #eeeeee; }
-.brown { background: #bcaaa4; }
+.brown { background: #bcaaa4; }*/

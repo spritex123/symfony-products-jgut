@@ -1,96 +1,71 @@
 {% extends 'AppBundle:Default:index.html.twig' %}
 
 {% block body %}
-    <div class="blue">
-        <h2>Products:index.html.twig</h2>
+    <div class="row blue">
+        <div class="col-xs-12">
+            <h2>Products:index.html.twig</h2>
 
-        {% if is_granted('ROLE_ADMIN') %}
-            {% if products %}
-                <table id="example" class="purple">
-                    <thead>
-                        <tr>
-                            <th><b>Id</b></th>
-                            <th><b>Name</b></th>
-                            <th><b>Description</b></th>
-                            <th><b>Thumbnail</b></th>
-                            <th><b>Price</b></th>
-                            <th><b>User id</b></th>
-                            <th><b>User email</b></th>
-                            <th><b>Delete</b></th>
-                        </tr>
-                    </thead>
-                    {% for product in products %}
-                        <tr>
-                            <td>{{ product.id }}</td>
-                            <td>{{ product.name }}</td>
-                            <td>{{ product.description }}</td>
-                            <td>
-                                {% if (product.thumbnail != null) and (file_exists(thumbnail_directory ~ product.thumbnail)) %}
-                                    {{ product.thumbnail }}
-                                    <p><img src="{{ asset(thumbnail_directory ~ product.thumbnail) }}" width="200" alt="Image"></p>
-                                {% else %}
-                                    {% if product.thumbnail is empty %}
-                                        NULL
-                                    {% else %}
-                                        {{ product.thumbnail }}
-                                    {% endif %}
+            {% if is_granted('ROLE_USER') %}
+                <div class="add">
+                    <ul class="nav nav-pills">
+                        <li><a href="{{ path('product_add') }}">Add</a></li>
+                    </ul>
+                </div>
+            {% endif %}
+
+            {% if is_granted('IS_AUTHENTICATED_FULLY') and products %}
+                <div class="table-responsive">
+                    <table id="example" class="table table-hover purple">
+                        <thead>
+                            <tr>
+                                <th><b>Id</b></th>
+                                <th><b>Name</b></th>
+                                <th><b>Description</b></th>
+                                <th><b>Thumbnail</b></th>
+                                <th><b>Price</b></th>
+                                <th><b>User id</b></th>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <th><b>User email</b></th>
+                                    <th><b>Delete</b></th>
+                                {% elseif is_granted('ROLE_USER') %}
+                                    <th><b>Edit</b></th>
+                                    <th><b>Delete</b></th>
                                 {% endif %}
-                            </td>
-                            <td>{{ product.price }}</td>
-                            <td>{{ product.user.id }}</td>
-                            <td>{{ product.user.email }}</td>
-                            <td><a href="{{ path('product_delete', { 'id': product.id }) }}" class="table">Delete</a></td>
-                        </tr>
-                    {% endfor %}
-                </table>
+                            </tr>
+                        </thead>
+                        {% for product in products %}
+                            <tr>
+                                <td>{{ product.id }}</td>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.description }}</td>
+                                <td>
+                                    {% if (product.thumbnail != null) and (file_exists(thumbnail_directory ~ product.thumbnail)) %}
+                                        {{ product.thumbnail }}
+                                        <p><img src="{{ asset(thumbnail_directory ~ product.thumbnail) }}" width="200" alt="Image"></p>
+                                    {% else %}
+                                        {% if product.thumbnail is empty %}
+                                            NULL
+                                        {% else %}
+                                            {{ product.thumbnail }}
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td>{{ product.price }}</td>
+                                <td>{{ product.user.id }}</td>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <td>{{ product.user.email }}</td>
+                                    <td><a href="{{ path('product_delete', { 'id': product.id }) }}" class="table">Delete</a></td>
+                                {% elseif is_granted('ROLE_USER') %}
+                                    <td><a href="{{ path('product_edit', { 'id': product.id }) }}" class="table">Edit</a></td>
+                                    <td><a href="{{ path('product_delete', { 'id': product.id }) }}" class="table">Delete</a></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
             {% else %}
                 <p>No products!</p>
             {% endif %}
-        {% elseif is_granted('ROLE_USER') %}
-            <div>
-                <a href="{{ path('product_add') }}">Add</a>
-            </div>
-            {% if products %}
-                <table id="example" class="purple">
-                    <thead>
-                        <tr>
-                            <th><b>Id</b></th>
-                            <th><b>Name</b></th>
-                            <th><b>Description</b></th>
-                            <th><b>Thumbnail</b></th>
-                            <th><b>Price</b></th>
-                            <th><b>User id</b></th>
-                            <th><b>Edit</b></th>
-                            <th><b>Delete</b></th>
-                        </tr>
-                    </thead>
-                    {% for product in products %}
-                        <tr>
-                            <td>{{ product.id }}</td>
-                            <td>{{ product.name }}</td>
-                            <td>{{ product.description }}</td>
-                            <td>
-                                {% if (product.thumbnail != null) and (file_exists(thumbnail_directory ~ product.thumbnail)) %}
-                                    {{ product.thumbnail }}
-                                    <p><img src="{{ asset(thumbnail_directory ~ product.thumbnail) }}" width="200" alt="Image"></p>
-                                {% else %}
-                                    {% if product.thumbnail is empty %}
-                                        NULL
-                                    {% else %}
-                                        {{ product.thumbnail }}
-                                    {% endif %}
-                                {% endif %}
-                            </td>
-                            <td>{{ product.price }}</td>
-                            <td>{{ product.user.id }}</td>
-                            <td><a href="{{ path('product_edit', { 'id': product.id }) }}" class="table">Edit</a></td>
-                            <td><a href="{{ path('product_delete', { 'id': product.id }) }}" class="table">Delete</a></td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            {% else %}
-                <p>No products!</p>
-            {% endif %}
-        {% endif %}
+        </div>
     </div>
 {% endblock %}

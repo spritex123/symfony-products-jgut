@@ -1,29 +1,36 @@
 {% extends 'AppBundle:Default:index.html.twig' %}
 
 {% block body %}
-    <div class="brown">
-        <h2>Registration:index.html.twig</h2>
-        {{ form_start(form, {'attr': {novalidate: 'novalidate'}}) }}
-            {{ form_label(form.email) }}
-            {{ form_widget(form.email) }}
-            {{ form_errors(form.email) }}
-
-            {{ form_label(form.password) }}
-            {{ form_widget(form.password) }}
-            {{ form_errors(form.password) }}
-
-            {{ form_label(form.name) }}
-            {{ form_widget(form.name) }}
-            {{ form_errors(form.name) }}
-
-            <label for="captcha">Validation value:</label>
-            <input type="text" id="captcha" name="captcha" class="validationValue" />
-
-            <div>
-                <div id="PuzzleCaptcha"></div>
-            </div>
-
-            <input type="submit" value="Registration" disabled="true" class="btnSubmit">
-        {{ form_end(form) }}
+    <div class="row brown">
+        <div class="col-xs-12 col-sm-4 col-sm-offset-4">
+            <h2>Registration:index.html.twig</h2>
+            {{ form_start(form, {'attr': {novalidate: 'novalidate'}}) }}
+                <div class="form-group">
+                    {{ form_label(form.email) }}
+                    {{ form_widget(form.email, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.email) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.password) }}
+                    {{ form_widget(form.password, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.password) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.name) }}
+                    {{ form_widget(form.name, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.name) }}
+                </div>
+                <div class="form-group">
+                    <label for="captcha">Validation value:</label>
+                    <input type="text" id="captcha" name="captcha" class="form-control validationValue" />
+                </div>
+                <div class="form-group">
+                    <div>
+                        <div id="PuzzleCaptcha"></div>
+                    </div>
+                </div>
+                    <input type="submit" value="Registration" disabled="true" class="btn btn-default btnSubmit">
+            {{ form_end(form) }}
+        </div>
     </div>
 {% endblock %}

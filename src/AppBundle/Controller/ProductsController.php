@@ -51,7 +51,7 @@ class ProductsController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UploadedFile $file */
+
             if ($product->getThumbnail()) {
                 $file = $product->getThumbnail();
                 $fileName = md5(uniqid()) . '.' . $file->guessExtension();
@@ -111,7 +111,6 @@ class ProductsController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $product->setUser($user);
 
-            /** @var UploadedFile $file */
             if ($product->getThumbnail()) {
                 $file = $product->getThumbnail();
                 $fileName = md5(uniqid()) . '.' . $file->guessExtension();

@@ -10,7 +10,7 @@ parameters:
     locale: en
     thumbnail_directory: '%kernel.root_dir%/../web/uploads/'
     email_parameter: 'xxx@gmail.com'
-    site: 'http://localhost/0-issart/spritex123-symfony-products-jgut/web/app_dev.php' #####№№№№№#### для отправки на почту
+    site: 'xxx' # http://.../web/app_dev.php
     enabled_parameter: '%site%/enabled/'
     forgot_password_parameter: '%site%/forgotpassword'
     new_password_parameter: '%site%/newpassword/'
@@ -88,3 +88,16 @@ assetic:
     use_controller: '%kernel.debug%'
     filters:
         cssrewrite: ~
+
+# hwi_oauth:
+
+#     firewall_names: [secured_area]
+
+#     resource_owners:
+#         google:
+#             type:                google
+#             client_id:           625827888019-c4i63jjij7vjhsfu4i82h0cg42wdf50p7j.apps.googleusercontent.com
+#             client_secret:       RZ8gKteftoplpjix53KWZOWx
+#             scope:               "xxx@gmail.com profile"
+#             options:
+#                 csrf: true

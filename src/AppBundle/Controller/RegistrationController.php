@@ -27,16 +27,6 @@ class RegistrationController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /*$repository = $this->getDoctrine()->getRepository('AppBundle:User');
-            $users = $repository->findAll();
-
-            $count = count($users);
-
-            for ($i = 0; $i < $count; $i++) {
-                if ($form->getData()->getEmail() == $users[$i]->getEmail()) {
-                    return $this->redirect($this->generateUrl('homepage'));
-                }
-            }*/
 
             $user->setEmail(mb_strtolower($user->getEmail()));
             $user->setPassword(md5($user->getPassword()));
@@ -73,11 +63,6 @@ class RegistrationController extends Controller
      */
     public function enabledAction($token)
     {
-        /*if (!$token) {
-            throw $this->createNotFoundException('No token ' . $token);
-        }*/
-
-        /** @var User $user */
         $user = $this->getDoctrine()->getRepository('AppBundle:User')->getByToken($token);
         if (!$user) {
             throw $this->createNotFoundException('No user found ' . $token);

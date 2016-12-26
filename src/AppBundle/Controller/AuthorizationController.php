@@ -61,7 +61,6 @@ class AuthorizationController extends Controller
             $repository = $this->getDoctrine()->getRepository('AppBundle:User');
             $users = $repository->findAll();
 
-            /** @var User $user */
             foreach ($users as $user) {
                 if ($user->getEmail() == $form->getData()->getEmail()) {
                     $user->setForgotPassword(true);
@@ -102,37 +101,22 @@ class AuthorizationController extends Controller
      */
     public function newPasswordAction(User $user, Request $request)
     {
-        /*if (!$token) {
-            throw $this->createNotFoundException('No token' . $token);
-        }*/
-
-        //$user = new User();
 
         $form = $this->createForm(ForgotSetPasswordType::class, $user);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /*$repository = $this->getDoctrine()->getRepository('AppBundle:User');
-            $users = $repository->findAll();*/
+            if ($user->getForgotPassword()) {
+                $user->setForgotPassword(false);
+                $user->setPassword(md5($form->getData()->getPassword()));
 
-            /** @var User $user */
-            /*foreach ($users as $user) {*/
-                if ($user->getForgotPassword()) {
-                    $user->setForgotPassword(false);
-                    $user->setPassword(md5($form->getData()->getPassword()));
+                $this->getDoctrine()->getManager()->flush();
 
-                    // $em = $this->getDoctrine()->getManager();
-                    // $em->flush();
-                    $this->getDoctrine()->getManager()->flush();
+                $this->addFlash('notice', 'Password changed!');
 
-                    $this->addFlash('notice', 'Password changed!');
-
-                    return $this->redirect($this->generateUrl('logout'));
-                }
-            // }
-
-            //return $this->redirect($this->generateUrl('new_password', ['token' => $token]));
+                return $this->redirect($this->generateUrl('logout'));
+            }
         }
 
         return $this->render('AppBundle:Authorization:forgotsetpassword.html.twig', ['form' => $form->createView()]);
